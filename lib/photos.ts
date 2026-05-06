@@ -113,6 +113,46 @@ export async function addPhoto(input: {
   return photo;
 }
 
+export async function addPhotoRecord(input: {
+  url: string;
+  pathname: string;
+  category: PhotoCategory;
+  title?: string;
+  caption?: string;
+  contentType?: string;
+}): Promise<Photo> {
+  if (!hasBlobToken()) {
+    throw new Error(
+      "BLOB_READ_WRITE_TOKEN is not configured. Enable Vercel Blob in your project."
+    );
+  }
+  const manifest = await readManifest();
+
+  // Idempotency: if a record for this pathname already exists, return it.
+  const existing = manifest.photos.find((p) => p.pathname === input.pathname);
+  if (existing) return existing;
+
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const sortOrder =
+    manifest.photos
+      .filter((p) => p.category === input.category)
+      .reduce((max, p) => Math.max(max, p.sortOrder), -1) + 1;
+
+  const photo: Photo = {
+    id,
+    url: input.url,
+    pathname: input.pathname,
+    category: input.category,
+    title: input.title?.trim() || undefined,
+    caption: input.caption?.trim() || undefined,
+    uploadedAt: new Date().toISOString(),
+    sortOrder,
+  };
+  manifest.photos.push(photo);
+  await writeManifest(manifest);
+  return photo;
+}
+
 export async function deletePhoto(id: string): Promise<void> {
   const manifest = await readManifest();
   const target = manifest.photos.find((p) => p.id === id);

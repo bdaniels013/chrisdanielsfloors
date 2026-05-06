@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import {
   PHOTO_CATEGORIES,
   categoryLabel,
@@ -66,35 +67,34 @@ export default function AdminClient({ blobConfigured }: { blobConfigured: boolea
 
   const uploadOne = useCallback(
     async (file: File, category: PhotoCategory, title?: string, caption?: string) => {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("category", category);
-      if (title) fd.append("title", title);
-      if (caption) fd.append("caption", caption);
-
-      return new Promise<Photo>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/api/admin/upload");
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setProgress({
-              name: file.name,
-              percent: Math.round((e.loaded / e.total) * 100),
-            });
-          }
-        };
-        xhr.onload = () => {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            if (xhr.status >= 200 && xhr.status < 300 && data.photo) resolve(data.photo);
-            else reject(new Error(data.error || `HTTP ${xhr.status}`));
-          } catch {
-            reject(new Error(`HTTP ${xhr.status}`));
-          }
-        };
-        xhr.onerror = () => reject(new Error("Network error."));
-        xhr.send(fd);
+      // Step 1: client-direct upload to Vercel Blob (bypasses the 4.5 MB
+      // serverless function body limit).
+      const safeName = file.name.replace(/[^a-z0-9.\-_]+/gi, "-").toLowerCase();
+      const pathname = `photos/${category}/${safeName}`;
+      const blob = await upload(pathname, file, {
+        access: "public",
+        handleUploadUrl: "/api/blob-upload",
+        onUploadProgress: ({ percentage }) => {
+          setProgress({ name: file.name, percent: Math.round(percentage) });
+        },
       });
+
+      // Step 2: record in manifest (gated by Basic Auth middleware).
+      const res = await fetch("/api/admin/photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: blob.url,
+          pathname: blob.pathname,
+          category,
+          title,
+          caption,
+          contentType: file.type,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data.photo as Photo;
     },
     []
   );
@@ -229,8 +229,8 @@ export default function AdminClient({ blobConfigured }: { blobConfigured: boolea
         <section className="rounded-md border border-line bg-cream/60 p-6 md:p-8">
           <h2 className="font-serif text-xl text-charcoal">Upload photos</h2>
           <p className="mt-1 text-sm text-charcoal-mid">
-            Drag &amp; drop, or click to choose files. JPG, PNG, or WebP, up to 25 MB
-            each.
+            Drag &amp; drop, or click to choose. JPG, PNG, WebP, AVIF, or HEIC,
+            up to 25 MB each. Photos upload directly to Vercel Blob.
           </p>
 
           <div className="mt-6 grid gap-5 md:grid-cols-3">

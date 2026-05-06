@@ -104,13 +104,36 @@ gradient placeholders so it never looks broken.
 ## Architecture
 
 ```
-lib/photos.ts         Vercel Blob manifest read/write + typed accessors
-middleware.ts         Basic-auth gate for /admin/* and /api/admin/*
-app/admin             Photo manager UI (client) + page wrapper (server)
-app/api/admin         Upload, delete, patch, manifest endpoints
-components/motion     Reveal, Stagger, ScrollProgress (framer-motion)
-components/SmartImage Next/Image wrapper with placeholder fallback
+lib/photos.ts          Vercel Blob manifest read/write + typed accessors
+middleware.ts          Basic-auth gate for /admin/* and /api/admin/*
+app/admin              Photo manager UI (client) + page wrapper (server)
+app/api/admin          Manifest GET, photo POST/PATCH/DELETE
+app/api/blob-upload    handleUpload endpoint for client-direct uploads
+components/motion      Reveal, Stagger, ScrollProgress (framer-motion)
+components/SmartImage  Next/Image wrapper with placeholder fallback
 ```
+
+### Photo upload flow
+
+Photos go straight from the browser to Vercel Blob — they don't pass through a
+serverless function — so the 4.5 MB serverless body limit doesn't apply. Up to
+25 MB per file.
+
+1. Browser POSTs to `/api/blob-upload` with file metadata. The route's
+   `onBeforeGenerateToken` re-checks the Basic-Auth header (forwarded
+   automatically by the browser since the admin page is in the same realm) and
+   returns a short-lived signed token.
+2. Browser uploads the file directly to Blob storage with the token.
+3. Once the upload resolves, the browser POSTs to `/api/admin/photo` (gated by
+   middleware) with the resulting URL + chosen category/title/caption to
+   append a record to `manifest.json` in Blob.
+4. Public pages call `getPhotos(...)` / `getGalleryPhotos()` from
+   `lib/photos.ts`, which fetches the manifest at request time. New uploads
+   are visible on the next page load.
+
+Local dev note: browsers cache Basic Auth credentials per origin, so once
+you've logged into `/admin`, the upload flow Just Works on `localhost`.
+
 
 ## Quote form delivery
 
