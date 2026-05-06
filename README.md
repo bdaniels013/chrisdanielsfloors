@@ -17,14 +17,14 @@ Open http://localhost:3000.
 To use the photo admin locally, create a `.env.local` file:
 
 ```
-ADMIN_USER=chris
 ADMIN_PASS=some-strong-password
 
 # Optional — connect to a Vercel Blob store (see "Vercel Blob" below)
 BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Then visit http://localhost:3000/admin and sign in with the credentials above.
+Then visit http://localhost:3000/admin — you'll be redirected to a sign-in
+page. Enter the password and you're in for 30 days (signed httpOnly cookie).
 
 ## Build
 
@@ -43,11 +43,11 @@ The repo is already connected — pushes to `main` deploy automatically.
    - Vercel project → Storage → Create → **Blob**.
    - This auto-adds a `BLOB_READ_WRITE_TOKEN` env var to all environments.
 
-2. **Set admin credentials**
-   - Vercel project → Settings → Environment Variables → add **both**:
-     - `ADMIN_USER` — pick a username (e.g. `chris`)
+2. **Set admin password**
+   - Vercel project → Settings → Environment Variables → add:
      - `ADMIN_PASS` — pick a strong password
    - Apply to **Production**, **Preview**, and **Development**.
+   - (`ADMIN_USER` from earlier versions is no longer used — safe to remove.)
 
 3. **Redeploy** so the new env vars take effect.
 
@@ -55,8 +55,9 @@ The repo is already connected — pushes to `main` deploy automatically.
 
 ## Photo Admin (`/admin`)
 
-Visit `https://your-domain.com/admin`. The browser will prompt for the basic
-auth credentials you set above.
+Visit `https://your-domain.com/admin`. You'll be redirected to a sign-in page —
+enter the `ADMIN_PASS` you set in Vercel. Sessions last 30 days (signed
+httpOnly cookie). A "Sign out" link in the admin header clears it.
 
 From there you can:
 

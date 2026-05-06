@@ -201,7 +201,7 @@ export default function AdminClient({ blobConfigured }: { blobConfigured: boolea
             </p>
             <h1 className="font-serif text-2xl text-charcoal">Photo Manager</h1>
           </div>
-          <div className="flex items-center gap-3 text-xs text-charcoal-mid">
+          <div className="flex items-center gap-2 text-xs text-charcoal-mid">
             <span className="hidden sm:inline">
               {photos.length} photo{photos.length === 1 ? "" : "s"} stored
             </span>
@@ -210,6 +210,12 @@ export default function AdminClient({ blobConfigured }: { blobConfigured: boolea
               className="rounded-sm border border-line bg-cream px-3 py-1.5 text-[11px] font-medium uppercase tracking-button text-charcoal hover:bg-paper"
             >
               View site
+            </a>
+            <a
+              href="/api/admin/logout"
+              className="rounded-sm border border-line px-3 py-1.5 text-[11px] font-medium uppercase tracking-button text-charcoal-mid hover:border-charcoal hover:text-charcoal"
+            >
+              Sign out
             </a>
           </div>
         </div>
