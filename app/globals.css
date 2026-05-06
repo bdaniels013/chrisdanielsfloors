@@ -13,6 +13,13 @@
   --paper: #fbf8f2;
   --charcoal: #1f2428;
   --line: #d9d2c2;
+  --shadow-elev-1: 0 1px 2px rgba(31, 36, 40, 0.04), 0 4px 16px rgba(31, 36, 40, 0.06);
+  --shadow-elev-2: 0 4px 12px rgba(31, 36, 40, 0.08), 0 24px 48px rgba(31, 36, 40, 0.10);
+  --shadow-elev-3: 0 12px 32px rgba(31, 36, 40, 0.12), 0 40px 80px rgba(31, 36, 40, 0.16);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -27,9 +34,22 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* The horizon line — brand primitive */
+::selection {
+  background: var(--steel);
+  color: var(--cream);
+}
+
+:focus-visible {
+  outline: 2px solid var(--steel);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Brand primitives ---------- */
+
 .horizon-rule {
   display: inline-block;
   height: 1px;
@@ -37,7 +57,9 @@ body {
   width: 180px;
 }
 
-/* Subtle vertical "plank" backdrop, used behind the cover hero */
+.divider-em::before { content: "—"; color: var(--oak); margin-right: 0.5em; }
+.divider-em::after  { content: "—"; color: var(--oak); margin-left: 0.5em; }
+
 .plank-overlay {
   background-image:
     repeating-linear-gradient(
@@ -52,7 +74,6 @@ body {
   pointer-events: none;
 }
 
-/* Wood-grain texture, used as a section accent. */
 .grain-bg {
   background:
     repeating-linear-gradient(
@@ -65,12 +86,59 @@ body {
     );
 }
 
-/* Section eyebrow underline pattern (numbered dividers). */
-.divider-em::before { content: "—"; color: var(--oak); margin-right: 0.5em; }
-.divider-em::after  { content: "—"; color: var(--oak); margin-left: 0.5em; }
+/* Subtle noise — adds depth to flat sections */
+.noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' stitchTiles='stitch' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.14 0 0 0 0 0.16 0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+}
 
-/* Soft fade-in on first paint */
+/* Glassmorphism card */
+.glass {
+  background: rgba(251, 248, 242, 0.6);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border: 1px solid rgba(217, 210, 194, 0.6);
+}
+
+/* Gradient that animates subtly — used as hero fallback */
+.brand-gradient {
+  background:
+    radial-gradient(60% 80% at 80% 10%, rgba(229, 210, 189, 0.55) 0%, transparent 60%),
+    radial-gradient(70% 90% at 10% 90%, rgba(79, 106, 134, 0.55) 0%, transparent 65%),
+    linear-gradient(180deg, #1F2428 0%, #243240 50%, #36506B 100%);
+}
+
+.brand-gradient-warm {
+  background:
+    radial-gradient(60% 80% at 70% 20%, rgba(229, 210, 189, 0.7) 0%, transparent 60%),
+    radial-gradient(70% 90% at 20% 80%, rgba(184, 137, 94, 0.5) 0%, transparent 65%),
+    linear-gradient(135deg, #1F2428 0%, #5a3d28 60%, #b8895e 100%);
+}
+
+/* Slow drift for gradient backgrounds */
 @media (prefers-reduced-motion: no-preference) {
+  .drift {
+    animation: drift 22s ease-in-out infinite alternate;
+    background-size: 140% 140%;
+  }
+  @keyframes drift {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+
+  .float-y {
+    animation: floatY 6s ease-in-out infinite;
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+
   .fade-in {
     animation: fadeUp 0.9s ease-out both;
   }
@@ -78,17 +146,93 @@ body {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
+  .marquee {
+    animation: marquee 40s linear infinite;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
 }
 
-/* Focus rings: subtle but always visible */
-:focus-visible {
-  outline: 2px solid var(--steel);
-  outline-offset: 3px;
-  border-radius: 2px;
+/* Card hover lift */
+.lift {
+  transition: transform 0.4s cubic-bezier(.2,.7,.2,1), box-shadow 0.4s ease;
+}
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-elev-2);
 }
 
-/* Selection */
-::selection {
-  background: var(--steel);
-  color: var(--cream);
+/* Image kenburns on hover */
+.kenburn img,
+.kenburn .img-target {
+  transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+}
+.kenburn:hover img,
+.kenburn:hover .img-target {
+  transform: scale(1.06);
+}
+
+/* Underline-grow link */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Scrollbar styling — subtle, matches palette */
+@media (pointer: fine) {
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(79, 106, 134, 0.35);
+    border-radius: 999px;
+    border: 2px solid var(--paper);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(79, 106, 134, 0.55); }
+}
+
+/* Section accent — diagonal divider for visual interest */
+.accent-rule {
+  position: relative;
+}
+.accent-rule::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  height: 2px;
+  width: 64px;
+  background: var(--oak);
+}
+
+/* For lightbox container so it never inherits prose */
+.yarl__container { background: rgba(31, 36, 40, 0.96) !important; }
+.yarl__slide_image { object-fit: contain; }
+
+/* Reduced-motion override */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

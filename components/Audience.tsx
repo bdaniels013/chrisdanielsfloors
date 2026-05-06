@@ -1,4 +1,5 @@
 import Eyebrow from "./Eyebrow";
+import Reveal, { Stagger, StaggerItem } from "./motion/Reveal";
 
 const groups = [
   {
@@ -24,23 +25,30 @@ const groups = [
 export default function Audience() {
   return (
     <section className="bg-paper">
-      <div className="mx-auto max-w-shell px-6 py-20 md:px-12 md:py-28">
-        <div className="max-w-2xl">
+      <div className="mx-auto max-w-shell px-6 py-24 md:px-12 md:py-28">
+        <Reveal className="max-w-2xl">
           <Eyebrow number="04">Who we serve</Eyebrow>
           <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-5xl">
-            Three audiences. One way of working.
+            Three audiences.
+            <span className="block italic text-steel">One way of working.</span>
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">
+        <Stagger className="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">
           {groups.map((g) => (
-            <div key={g.title} className="border-t border-line pt-8">
-              <span className="font-serif italic text-oak">{g.n}</span>
-              <h3 className="mt-3 font-serif text-2xl text-charcoal">{g.title}</h3>
-              <p className="mt-4 text-charcoal-mid">{g.body}</p>
-            </div>
+            <StaggerItem key={g.title}>
+              <div className="group relative h-full border-t border-line pt-8 transition-colors">
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-0 h-px w-12 bg-oak transition-all duration-500 group-hover:w-24"
+                />
+                <span className="font-serif italic text-oak">{g.n}</span>
+                <h3 className="mt-3 font-serif text-2xl text-charcoal">{g.title}</h3>
+                <p className="mt-4 text-charcoal-mid">{g.body}</p>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

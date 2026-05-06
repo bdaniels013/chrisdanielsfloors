@@ -1,16 +1,22 @@
 import Eyebrow from "./Eyebrow";
 import PullQuote from "./PullQuote";
-import PlaceholderImage from "./PlaceholderImage";
+import SmartImage from "./SmartImage";
+import Reveal from "./motion/Reveal";
 import { site } from "@/lib/site";
+import { getGalleryPhotos } from "@/lib/photos";
 
-export default function About() {
+export default async function About() {
+  const photos = await getGalleryPhotos();
+  const slot = (i: number) => photos[i]?.url ?? null;
+
   return (
-    <section className="bg-cream">
-      <div className="mx-auto max-w-shell px-6 py-20 md:grid md:grid-cols-2 md:gap-16 md:px-12 md:py-32">
-        <div>
+    <section className="relative bg-cream">
+      <div className="mx-auto max-w-shell px-6 py-24 md:grid md:grid-cols-2 md:gap-16 md:px-12 md:py-32">
+        <Reveal>
           <Eyebrow number="02">About Chris</Eyebrow>
-          <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-5xl">
-            Thirty years on the Coast.
+          <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+            Thirty years
+            <span className="block italic text-steel">on the Coast.</span>
           </h2>
           <p className="mt-6 max-w-prose text-[17px] leading-relaxed text-charcoal-mid">
             Chris Daniels has been installing floors on the Mississippi Gulf
@@ -32,7 +38,7 @@ export default function About() {
 
           <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-6">
             <li>
-              <span className="block text-3xl font-serif text-charcoal">
+              <span className="block font-serif text-3xl text-charcoal">
                 {site.yearsExperience}+
               </span>
               <span className="text-[11px] uppercase tracking-eyebrow text-charcoal-soft">
@@ -40,7 +46,7 @@ export default function About() {
               </span>
             </li>
             <li>
-              <span className="block text-3xl font-serif text-charcoal">
+              <span className="block font-serif text-3xl text-charcoal">
                 {new Date().getFullYear() - site.established}
               </span>
               <span className="text-[11px] uppercase tracking-eyebrow text-charcoal-soft">
@@ -48,26 +54,36 @@ export default function About() {
               </span>
             </li>
             <li>
-              <span className="block text-3xl font-serif text-charcoal">1</span>
+              <span className="block font-serif text-3xl text-charcoal">1</span>
               <span className="text-[11px] uppercase tracking-eyebrow text-charcoal-soft">
                 Name on every job
               </span>
             </li>
             <li>
-              <span className="block text-3xl font-serif text-charcoal">$0</span>
+              <span className="block font-serif text-3xl text-charcoal">$0</span>
               <span className="text-[11px] uppercase tracking-eyebrow text-charcoal-soft">
                 In-home estimate fee
               </span>
             </li>
           </ul>
-        </div>
+        </Reveal>
 
-        <div className="mt-12 grid grid-cols-2 gap-4 md:mt-0 md:gap-5">
-          <PlaceholderImage shot="hands-at-work" ratio="3/4" label="Threshold detail" />
-          <PlaceholderImage shot="plank-detail" ratio="3/4" label="Plank grain" className="mt-10" />
-          <PlaceholderImage shot="room-wide" ratio="4/3" />
-          <PlaceholderImage shot="grain-texture" ratio="4/3" className="mt-10" />
-        </div>
+        <Reveal delay={0.1} className="mt-12 md:mt-0">
+          <div className="grid grid-cols-2 gap-4 md:gap-5">
+            <div className="kenburn lift overflow-hidden rounded-md">
+              <SmartImage src={slot(0)} alt="Project detail" shot="hands-at-work" ratio="3/4" />
+            </div>
+            <div className="kenburn lift mt-10 overflow-hidden rounded-md">
+              <SmartImage src={slot(1)} alt="Plank grain" shot="plank-detail" ratio="3/4" />
+            </div>
+            <div className="kenburn lift overflow-hidden rounded-md">
+              <SmartImage src={slot(2)} alt="Room wide" shot="room-wide" ratio="4/3" />
+            </div>
+            <div className="kenburn lift mt-10 overflow-hidden rounded-md">
+              <SmartImage src={slot(3)} alt="Wood grain" shot="grain-texture" ratio="4/3" />
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

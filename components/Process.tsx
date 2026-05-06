@@ -1,4 +1,5 @@
 import Eyebrow from "./Eyebrow";
+import Reveal, { Stagger, StaggerItem } from "./motion/Reveal";
 
 const steps = [
   {
@@ -35,37 +36,54 @@ const steps = [
 
 export default function Process() {
   return (
-    <section className="bg-charcoal text-cream">
-      <div className="mx-auto max-w-shell px-6 py-20 md:px-12 md:py-32">
-        <div className="max-w-2xl">
+    <section className="relative overflow-hidden bg-charcoal text-cream">
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal to-steel-deep/90"
+      />
+      <div aria-hidden className="absolute inset-0 noise" />
+
+      <div className="relative mx-auto max-w-shell px-6 py-24 md:px-12 md:py-32">
+        <Reveal className="max-w-2xl">
           <Eyebrow number="03" variant="dark">
             How a job goes
           </Eyebrow>
-          <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-5xl">
-            Five steps. The same steps, every time.
+          <h2 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
+            Five steps.
+            <span className="block italic text-oak-soft">
+              The same steps, every time.
+            </span>
           </h2>
-          <p className="mt-6 max-w-prose text-cream/85">
+          <p className="mt-6 max-w-prose text-cream/80">
             Confidence doesn&apos;t shout. The process is calm because the
             crew has done it for thirty years.
           </p>
-        </div>
+        </Reveal>
 
-        <ol className="mt-14 grid gap-px overflow-hidden rounded-sm bg-cream/10 md:grid-cols-5">
-          {steps.map((step) => (
-            <li
-              key={step.n}
-              className="bg-charcoal p-8"
-            >
-              <span className="font-serif italic text-oak-soft">{step.n}</span>
-              <h3 className="mt-2 font-serif text-xl leading-snug text-cream">
-                {step.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-cream/75">
-                {step.body}
-              </p>
-            </li>
+        <Stagger className="mt-16 grid gap-px overflow-hidden rounded-md bg-cream/10 md:grid-cols-5">
+          {steps.map((step, i) => (
+            <StaggerItem key={step.n}>
+              <div className="relative h-full bg-charcoal/85 p-7 transition-colors hover:bg-charcoal md:p-8">
+                <div className="flex items-baseline justify-between">
+                  <span className="font-serif italic text-oak-soft">{step.n}</span>
+                  <span className="text-[10px] uppercase tracking-button text-cream/40">
+                    Step {i + 1}/{steps.length}
+                  </span>
+                </div>
+                <h3 className="mt-4 font-serif text-xl leading-snug text-cream">
+                  {step.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-cream/75">
+                  {step.body}
+                </p>
+                <span
+                  aria-hidden
+                  className="mt-6 block h-px w-10 bg-oak transition-all duration-500 group-hover:w-20"
+                />
+              </div>
+            </StaggerItem>
           ))}
-        </ol>
+        </Stagger>
       </div>
     </section>
   );

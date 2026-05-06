@@ -3,6 +3,7 @@ import Eyebrow from "@/components/Eyebrow";
 import PullQuote from "@/components/PullQuote";
 import Process from "@/components/Process";
 import CtaStrip from "@/components/CtaStrip";
+import Reveal, { Stagger, StaggerItem } from "@/components/motion/Reveal";
 
 export const metadata: Metadata = {
   title: "Installation — LVP, Hardwood, Tile, Carpet",
@@ -37,31 +38,38 @@ export default function InstallationPage() {
   return (
     <>
       <section className="bg-paper">
-        <div className="mx-auto max-w-shell px-6 py-20 md:px-12 md:py-32">
-          <Eyebrow number="01">Installation</Eyebrow>
-          <h1 className="max-w-4xl font-serif text-4xl leading-tight tracking-tight md:text-6xl">
-            Premium flooring solutions, hand-installed.
-          </h1>
-          <p className="mt-6 max-w-prose text-[17px] leading-relaxed text-charcoal-mid">
-            Our installation process is quick and easy, with minimal disruption
-            to your daily routine. Home improvement projects can be stressful,
-            so we make the install as smooth as possible — for you, and for the
-            room.
-          </p>
+        <div className="mx-auto max-w-shell px-6 py-24 md:px-12 md:py-32">
+          <Reveal>
+            <Eyebrow number="01">Installation</Eyebrow>
+            <h1 className="max-w-4xl font-serif text-4xl leading-tight tracking-tight md:text-7xl">
+              Premium flooring solutions,
+              <span className="block italic text-steel">hand-installed.</span>
+            </h1>
+            <p className="mt-6 max-w-prose text-[17px] leading-relaxed text-charcoal-mid">
+              Our installation process is quick and easy, with minimal disruption
+              to your daily routine. Home improvement projects can be stressful,
+              so we make the install as smooth as possible — for you, and for the
+              room.
+            </p>
+          </Reveal>
 
-          <div className="mt-14 grid gap-px overflow-hidden rounded-sm bg-line/60 md:grid-cols-2">
+          <Stagger className="mt-14 grid gap-px overflow-hidden rounded-md bg-line/60 md:grid-cols-2">
             {services.map((s) => (
-              <article key={s.title} className="bg-paper p-7 md:p-9">
-                <h2 className="font-serif text-2xl text-charcoal">{s.title}</h2>
-                <p className="mt-3 max-w-prose text-charcoal-mid">{s.body}</p>
-              </article>
+              <StaggerItem key={s.title}>
+                <article className="lift h-full bg-paper p-7 transition-colors hover:bg-cream md:p-9">
+                  <h2 className="font-serif text-2xl text-charcoal">{s.title}</h2>
+                  <p className="mt-3 max-w-prose text-charcoal-mid">{s.body}</p>
+                </article>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
-          <PullQuote>
-            Tight seams. Quiet thresholds. A floor installed so well the
-            homeowner forgets we were there.
-          </PullQuote>
+          <Reveal>
+            <PullQuote>
+              Tight seams. Quiet thresholds. A floor installed so well the
+              homeowner forgets we were there.
+            </PullQuote>
+          </Reveal>
         </div>
       </section>
 

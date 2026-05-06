@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Eyebrow from "@/components/Eyebrow";
 import QuoteForm from "@/components/QuoteForm";
+import Reveal from "@/components/motion/Reveal";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -12,11 +13,12 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <section className="bg-paper">
-      <div className="mx-auto grid max-w-shell gap-12 px-6 py-20 md:grid-cols-[1fr_1.2fr] md:gap-16 md:px-12 md:py-32">
-        <div>
+      <div className="mx-auto grid max-w-shell gap-12 px-6 py-24 md:grid-cols-[1fr_1.2fr] md:gap-16 md:px-12 md:py-32">
+        <Reveal>
           <Eyebrow number="01">Contact</Eyebrow>
-          <h1 className="font-serif text-4xl leading-tight tracking-tight md:text-6xl">
-            Let&apos;s look at the room.
+          <h1 className="font-serif text-4xl leading-tight tracking-tight md:text-7xl">
+            Let&apos;s look
+            <span className="block italic text-steel">at the room.</span>
           </h1>
           <p className="mt-6 max-w-prose text-[17px] leading-relaxed text-charcoal-mid">
             Free in-home estimate. No follow-up calls, no pressure pitch —
@@ -52,11 +54,11 @@ export default function ContactPage() {
               ))}
             </ul>
           </div>
-        </div>
+        </Reveal>
 
-        <div>
+        <Reveal delay={0.1}>
           <QuoteForm />
-        </div>
+        </Reveal>
       </div>
     </section>
   );
