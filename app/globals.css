@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --steel: #4f6a86;
+  --steel-deep: #36506b;
+  --steel-mist: #869eb6;
+  --oak: #b8895e;
+  --oak-deep: #8c6440;
+  --oak-soft: #e5d2bd;
+  --cream: #f4efe6;
+  --paper: #fbf8f2;
+  --charcoal: #1f2428;
+  --line: #d9d2c2;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--charcoal);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* The horizon line — brand primitive */
+.horizon-rule {
+  display: inline-block;
+  height: 1px;
+  background: var(--oak);
+  width: 180px;
+}
+
+/* Subtle vertical "plank" backdrop, used behind the cover hero */
+.plank-overlay {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 80px,
+      rgba(31, 36, 40, 0.06) 80px,
+      rgba(31, 36, 40, 0.06) 81px
+    ),
+    linear-gradient(to top, rgba(140, 100, 64, 0.55) 0%, transparent 100%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Wood-grain texture, used as a section accent. */
+.grain-bg {
+  background:
+    repeating-linear-gradient(
+      95deg,
+      #b8895e 0px,
+      #a87850 2px,
+      #b8895e 4px,
+      #c49b70 7px,
+      #b8895e 11px
+    );
+}
+
+/* Section eyebrow underline pattern (numbered dividers). */
+.divider-em::before { content: "—"; color: var(--oak); margin-right: 0.5em; }
+.divider-em::after  { content: "—"; color: var(--oak); margin-left: 0.5em; }
+
+/* Soft fade-in on first paint */
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fadeUp 0.9s ease-out both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Focus rings: subtle but always visible */
+:focus-visible {
+  outline: 2px solid var(--steel);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--steel);
+  color: var(--cream);
+}
